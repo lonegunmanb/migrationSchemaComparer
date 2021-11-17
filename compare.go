@@ -2,8 +2,9 @@ package migrationSchemaComparer
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"reflect"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func Equal(resourceSchemas, migrationSchemas map[string]*schema.Schema, currentPath string) error {
@@ -18,7 +19,7 @@ func Equal(resourceSchemas, migrationSchemas map[string]*schema.Schema, currentP
 			return fmt.Errorf("expected %s.%s not existd in migration", currentPath, key)
 		}
 		if !reflect.DeepEqual(resourceSchema, migrationSchema) {
-			if resourceSchema.Type == schema.TypeList || resourceSchema.Type == schema.TypeSet || resourceSchema.Type == schema.TypeMap {
+			if resourceSchema.Type == schema.TypeList || resourceSchema.Type == schema.TypeSet {
 				switch t := resourceSchema.Elem.(type) {
 				case *schema.Resource:
 					return Equal(t.Schema, migrationSchema.Elem.(*schema.Resource).Schema, fmt.Sprintf("%s.%s", currentPath, key))

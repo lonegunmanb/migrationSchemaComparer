@@ -1,16 +1,15 @@
 package migrationSchemaComparer_test
 
 import (
-	"github.com/hashicorp/go-cty/cty"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"strings"
 	"testing"
-)
 
-//import "github.com/Azure/azure-sdk-for-go/services/containerservice/mgmt/2021-08-01/containerservice"
-import "github.com/lonegunmanb/migrationSchemaComparer"
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-import "github.com/stretchr/testify/assert"
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/lonegunmanb/migrationSchemaComparer"
+	"github.com/stretchr/testify/assert"
+)
 
 func TestCompareEmptySchema(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{}
@@ -636,7 +635,7 @@ func TestSchemaFuncShouldBeWipeOut(t *testing.T) {
 			},
 		},
 	}
-	migrationSchema := map[string]*schema.Schema {
+	migrationSchema := map[string]*schema.Schema{
 		"field": {
 			Type:     schema.TypeInt,
 			Required: true,
@@ -652,17 +651,17 @@ func TestSchemaFuncShouldBeWipeOut(t *testing.T) {
 func TestSchemaFuncShouldBeWipeOut_same_func(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"field": {
-			Type:     schema.TypeInt,
-			Required: true,
-			ForceNew: true,
+			Type:             schema.TypeInt,
+			Required:         true,
+			ForceNew:         true,
 			DiffSuppressFunc: suppressFunc,
 		},
 	}
-	migrationSchema := map[string]*schema.Schema {
+	migrationSchema := map[string]*schema.Schema{
 		"field": {
-			Type:     schema.TypeInt,
-			Required: true,
-			ForceNew: true,
+			Type:             schema.TypeInt,
+			Required:         true,
+			ForceNew:         true,
 			DiffSuppressFunc: suppressFunc,
 		},
 	}
