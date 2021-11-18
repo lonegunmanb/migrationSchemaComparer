@@ -169,8 +169,6 @@ func TestComplexTypeField(t *testing.T) {
 						ForceNew: true,
 						Required: true,
 					},
-					MaxItems: 100,
-					MinItems: 2,
 					ValidateFunc: func(i interface{}, s string) ([]string, []error) {
 						return nil, nil
 					},
@@ -180,13 +178,12 @@ func TestComplexTypeField(t *testing.T) {
 				"field": {
 					Type:     schema.TypeList,
 					ForceNew: true,
+					Optional: true,
 					Elem: schema.Schema{
 						Type:     schema.TypeInt,
 						ForceNew: true,
 						Required: true,
 					},
-					MaxItems: 100,
-					MinItems: 1,
 				},
 			},
 		},
@@ -378,7 +375,7 @@ func TestComplexTypeField(t *testing.T) {
 					Elem: schema.Schema{
 						Type:     schema.TypeInt,
 						ForceNew: true,
-						Required: true,
+						Optional: true,
 					},
 					MaxItems: 100,
 					MinItems: 2,
@@ -394,7 +391,7 @@ func TestComplexTypeField(t *testing.T) {
 					Elem: schema.Schema{
 						Type:     schema.TypeInt,
 						ForceNew: true,
-						Required: true,
+						Optional: false,
 					},
 					MaxItems: 100,
 					MinItems: 1,
@@ -530,7 +527,7 @@ func TestValidationInsideListElementObjectType_error_should_contains_correct_fie
 					"embedded_field": {
 						Type:     schema.TypeString,
 						Required: true,
-						ForceNew: false,
+						Optional: false,
 					},
 				},
 			},
@@ -547,7 +544,7 @@ func TestValidationInsideListElementObjectType_error_should_contains_correct_fie
 					"embedded_field": {
 						Type:     schema.TypeString,
 						Required: true,
-						ForceNew: true,
+						Optional: true,
 					},
 				},
 			},
@@ -666,6 +663,63 @@ func TestSchemaFuncShouldBeWipeOut_same_func(t *testing.T) {
 		},
 	}
 	assert.Nil(t, migrationSchemaComparer.Equal(resourceSchema, migrationSchema, ""))
+}
+
+func TestMiscFieldsShouldBeSetToDefaultValue(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"field": {
+			Type:             schema.TypeInt,
+			ConfigMode:       1,
+			Optional:         true,
+			Required:         true,
+			DiffSuppressFunc: nil,
+			Default:          1,
+			DefaultFunc:      nil,
+			Description:      "desc",
+			InputDefault:     "input default",
+			Computed:         true,
+			ForceNew:         true,
+			StateFunc:        nil,
+			Elem: &struct {
+
+			}{},
+			MaxItems:         100,
+			MinItems:         100,
+			Set:              nil,
+			ComputedWhen:     []string{},
+			ConflictsWith:    []string{},
+			ExactlyOneOf:     []string{},
+			AtLeastOneOf:     []string{},
+			RequiredWith:     []string{},
+			Deprecated:       "deprecated",
+			ValidateFunc:     nil,
+			ValidateDiagFunc: nil,
+			Sensitive:        true,
+		},
+	}
+
+	migrationSchemaComparer.CleanObjectValidations(resourceSchema)
+	field := resourceSchema["field"]
+	assert.Equal(t, schema.TypeInt, field.Type)
+	assert.Equal(t, schema.SchemaConfigMode(0), field.ConfigMode)
+	assert.True(t, field.Optional)
+	assert.True(t, field.Required)
+	assert.Equal(t, nil, field.Default)
+	assert.Equal(t, "", field.Description)
+	assert.Equal(t, "", field.InputDefault)
+	assert.True(t, field.Computed)
+	assert.False(t, field.ForceNew)
+	assert.NotNil(t, field.Elem)
+	assert.Equal(t, 0, field.MaxItems)
+	assert.Equal(t, 0, field.MinItems)
+	assert.Nil(t, field.Set)
+	assert.Nil(t, field.ComputedWhen)
+	assert.Nil(t, field.ConflictsWith)
+	assert.Nil(t, field.ExactlyOneOf)
+	assert.Nil(t, field.AtLeastOneOf)
+	assert.Nil(t, field.RequiredWith)
+	assert.Equal(t, "", field.Deprecated)
+	assert.False(t, field.Sensitive)
 }
 
 var suppressFunc = func(k, old, new string, d *schema.ResourceData) bool {

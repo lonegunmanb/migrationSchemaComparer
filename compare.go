@@ -38,11 +38,7 @@ func CleanObjectValidations(object map[string]*schema.Schema) {
 }
 
 func CleanSchemaValidation(s *schema.Schema) {
-	s.ValidateFunc = nil
-	s.DiffSuppressFunc = nil
-	s.StateFunc = nil
-	s.ValidateDiagFunc = nil
-	s.DefaultFunc = nil
+	setToDefault(s)
 	if s.Type == schema.TypeList || s.Type == schema.TypeSet || s.Type == schema.TypeMap {
 		switch t := s.Elem.(type) {
 		case *schema.Schema:
@@ -51,4 +47,26 @@ func CleanSchemaValidation(s *schema.Schema) {
 			CleanObjectValidations(t.Schema)
 		}
 	}
+}
+
+func setToDefault(s *schema.Schema) {
+	s.ValidateFunc = nil
+	s.DiffSuppressFunc = nil
+	s.StateFunc = nil
+	s.ValidateDiagFunc = nil
+	s.DefaultFunc = nil
+	s.Default = nil
+	s.Description = ""
+	s.ConfigMode = 0
+	s.InputDefault = ""
+	s.ForceNew = false
+	s.MaxItems = 0
+	s.MinItems = 0
+	s.ComputedWhen = nil
+	s.ConflictsWith = nil
+	s.ExactlyOneOf = nil
+	s.AtLeastOneOf = nil
+	s.RequiredWith = nil
+	s.Deprecated = ""
+	s.Sensitive = false
 }
